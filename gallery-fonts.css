@@ -1,0 +1,194 @@
+/* ============================================
+   THE GALLERY AUSTIN — BRAND TYPOGRAPHY
+   All fonts loaded from Google Fonts CDN
+   Include this <link> in every HTML file
+   BEFORE any other stylesheets
+   ============================================ */
+
+/*
+REQUIRED <link> TAG — paste in <head> of every page:
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,300;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+*/
+
+/* ============================================
+   FONT STACKS
+   ============================================ */
+
+:root {
+  --font-display:  'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
+  --font-editorial:'Cormorant Garamond', 'Garamond', 'Georgia', serif;
+  --font-body:     'Raleway', 'Gill Sans', 'Optima', sans-serif;
+  --font-mono:     'Space Mono', 'Courier New', monospace;
+}
+
+/* ============================================
+   PHYSICAL GALLERY — USAGE RULES
+   ============================================
+
+   Cinzel (--font-display)
+   → Logo, hall names, navigation labels, section eyebrows
+   → Always uppercase or small-caps
+   → Weights used: 400 (regular), 600 (semibold)
+   → Letter-spacing: 0.15em to 0.35em
+   → NEVER italic
+
+   Cormorant Garamond (--font-editorial)
+   → Work titles, pull quotes, manifesto text, modal headings
+   → Preferred style: italic (font-style: italic)
+   → Weights used: 300 (light), 400 (regular)
+   → Letter-spacing: 0.02em to 0.06em
+   → This is the emotional, expressive voice of the brand
+
+   Raleway (--font-body)
+   → Body copy, descriptions, UI labels, buttons, captions
+   → Weights used: 200 (extralight), 300 (light), 400 (regular), 500 (medium)
+   → Letter-spacing: 0.08em to 0.4em depending on context
+   → Button text: 500 weight, 0.2em+ letter-spacing, uppercase
+
+   ============================================ */
+
+/* ============================================
+   VIRTUEL — ADDITIONAL USAGE
+   ============================================
+
+   Space Mono (--font-mono)
+   → Blockchain data only: wallet addresses, transaction hashes,
+     edition counters (e.g. "3 of 10"), XTZ prices, drop timers
+   → Status labels: "◉ DROP IS LIVE", "EDITION COMPLETE"
+   → Never used for body copy or headings
+   → Often italic for emphasis
+   → Letter-spacing: 0.1em to 0.25em
+   → Color: var(--violet) #6040D0 or var(--cyan) #40C0E0
+
+   ============================================ */
+
+/* ============================================
+   TYPE SCALE — PHYSICAL GALLERY
+   ============================================ */
+
+/* Hero / Collection title */
+.type-hero {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Hall name / Section heading */
+.type-hall {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+/* Work title in modal */
+.type-work-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+}
+
+/* Eyebrow label (e.g. "PORTRAITS HALL · SUMMER 2026") */
+.type-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+/* Body / Description */
+.type-body {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  line-height: 1.9;
+}
+
+/* Button */
+.type-button {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+/* Edition counter */
+.type-edition {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Quote / Manifesto */
+.type-quote {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
+   TYPE SCALE — VIRTUEL
+   ============================================ */
+
+/* Virtuel hero */
+.type-virtuel-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+/* Blockchain / technical data */
+.type-chain {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  font-style: italic;
+}
+
+/* Drop timer */
+.type-timer {
+  font-family: var(--font-mono);
+  font-size: 2.5rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+/* ============================================
+   COMMON MISTAKES TO AVOID
+   ============================================
+
+   ✗ WRONG: Using Cinzel for body copy
+   ✗ WRONG: Using Raleway for work titles
+   ✗ WRONG: Using Cormorant Garamond in all-caps
+   ✗ WRONG: Using Space Mono outside Virtuel blockchain context
+   ✗ WRONG: Bold weight on Cormorant Garamond (use 300 or 400 only)
+   ✗ WRONG: Tight letter-spacing on Cinzel (always wide: 0.15em+)
+   ✗ WRONG: System fonts as fallback without the Google Fonts link tag
+
+   ✓ RIGHT: Cinzel uppercase + wide tracking = institutional authority
+   ✓ RIGHT: Cormorant italic light = emotional, editorial, expressive
+   ✓ RIGHT: Raleway light = clean, modern, understated luxury
+   ✓ RIGHT: Space Mono italic = digital, technical, blockchain-native
+
+   ============================================ */
