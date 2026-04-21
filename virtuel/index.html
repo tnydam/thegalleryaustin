@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtuel · The Gallery Austin · Digital Editions</title>
+<meta name="description" content="Digital editions of fine art photography. Each work exists as 10 NFTs — and nothing more. The Gallery Austin · Virtuel Collection.">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:wght@100;200;300;400&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void: #020408;
+  --deep: #060a12;
+  --surface: #0c1220;
+  --surface2: #111828;
+  --violet: #6040d0;
+  --violet2: #8060f0;
+  --violet3: rgba(96,64,208,0.15);
+  --violet4: rgba(96,64,208,0.06);
+  --cyan: #40c0e0;
+  --cold-cream: #d8e8f4;
+  --text: #a0b8cc;
+  --muted: #506070;
+  --border: rgba(96,64,208,0.25);
+  --border2: rgba(64,192,224,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:'Raleway',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+  cursor:default;
+}
+
+/* ── PARTICLE CANVAS ── */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6}
+
+/* ── GRID OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(96,64,208,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(96,64,208,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  z-index:0;pointer-events:none;
+}
+
+/* ── PORTAL ENTRANCE ── */
+#portal{
+  position:fixed;inset:0;
+  background:var(--void);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:2000;
+  transition:opacity 1.8s ease,visibility 1.8s ease;
+}
+#portal.out{opacity:0;visibility:hidden;pointer-events:none}
+
+.portal-ring{
+  position:relative;width:200px;height:200px;
+  margin-bottom:3rem;
+  opacity:0;animation:fadeIn .5s .2s forwards;
+}
+.portal-ring svg{
+  width:100%;height:100%;
+  animation:rotateSlow 12s linear infinite;
+}
+.portal-center{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.portal-logo-wrap{text-align:center}
+.portal-logo-main{
+  font-family:'Cinzel',serif;font-weight:400;
+  font-size:.85rem;letter-spacing:.28em;
+  color:var(--cold-cream);display:block;
+}
+.portal-logo-divider{
+  font-size:.35rem;letter-spacing:.5em;
+  color:var(--violet2);display:block;margin:.3rem 0;
+}
+.portal-logo-sub{
+  font-family:'Space Mono',monospace;
+  font-size:.55rem;letter-spacing:.2em;
+  color:var(--violet2);display:block;
+}
+
+.portal-title{
+  font-family:'Cinzel',serif;font-weight:400;
+  font-size:clamp(2.5rem,8vw,5.5rem);
+  letter-spacing:.35em;color:var(--cold-cream);
+  text-align:center;line-height:1;
+  opacity:0;animation:riseIn 1.2s .6s forwards;
+  position:relative;
+}
+.portal-title::after{
+  content:'';position:absolute;
+  bottom:-8px;left:50%;transform:translateX(-50%);
+  width:60%;height:1px;
+  background:linear-gradient(to right,transparent,var(--violet2),transparent);
+}
+.portal-tagline{
+  font-family:'Space Mono',monospace;font-style:italic;
+  font-size:.55rem;letter-spacing:.15em;
+  color:var(--violet2);margin-top:1.5rem;
+  opacity:0;animation:riseIn 1s 1.1s forwards;
+  text-align:center;
+}
+
+.portal-drop{
+  text-align:center;margin:2.5rem 0;
+  opacity:0;animation:riseIn .9s 1.5s forwards;
+}
+.portal-drop-label{
+  font-size:.4rem;letter-spacing:.55em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;
+}
+.portal-drop-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-style:italic;
+  color:var(--cold-cream);letter-spacing:.06em;
+}
+.portal-drop-status{
+  font-family:'Space Mono',monospace;
+  font-size:.5rem;color:var(--cyan);
+  margin-top:.3rem;letter-spacing:.15em;
+}
+
+.portal-btn{
+  background:none;
+  border:1px solid var(--border);
+  color:var(--violet2);
+  font-family:'Raleway',sans-serif;font-weight:200;
+  font-size:.6rem;letter-spacing:.6em;
+  text-transform:uppercase;
+  padding:1.1rem 4rem;cursor:pointer;
+  transition:all .5s;
+  opacity:0;animation:fadeIn .8s 2s forwards;
+  position:relative;overflow:hidden;
+}
+.portal-btn::before{
+  content:'';position:absolute;inset:0;
+  background:var(--violet3);
+  transform:translateX(-100%);
+  transition:transform .4s ease;
+}
+.portal-btn:hover::before{transform:translateX(0)}
+.portal-btn:hover{border-color:var(--violet2);letter-spacing:.8em}
+.portal-btn span{position:relative;z-index:1}
+
+.portal-return{
+  margin-top:1.5rem;
+  font-size:.4rem;letter-spacing:.35em;
+  color:var(--muted);
+  opacity:0;animation:fadeIn .8s 2.4s forwards;
+  cursor:pointer;transition:color .3s;
+  text-decoration:none;display:block;text-align:center;
+}
+.portal-return:hover{color:var(--text)}
+
+/* ── MAIN ── */
+#main{display:none;opacity:0;transition:opacity 1.2s ease;position:relative;z-index:1}
+#main.in{opacity:1}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  padding:1.2rem 3rem;
+  background:linear-gradient(to bottom,rgba(2,4,8,.98) 70%,transparent);
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(96,64,208,.1);
+}
+.nav-logo{cursor:pointer;line-height:1}
+.nav-logo-main{
+  font-family:'Cinzel',serif;font-size:.95rem;
+  letter-spacing:.25em;color:var(--cold-cream);display:block;
+}
+.nav-logo-sub{
+  font-family:'Space Mono',monospace;font-size:.45rem;
+  letter-spacing:.3em;color:var(--violet2);display:block;margin-top:.15rem;
+}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+.nav-links a{
+  font-size:.55rem;letter-spacing:.35em;
+  text-transform:uppercase;color:var(--muted);
+  cursor:pointer;transition:color .3s;
+}
+.nav-links a:hover,.nav-links a.on{color:var(--violet2)}
+.nav-wallet{
+  font-family:'Space Mono',monospace;
+  font-size:.5rem;letter-spacing:.15em;
+  color:var(--cyan);border:1px solid var(--border2);
+  padding:.5rem 1.2rem;cursor:pointer;transition:all .3s;
+  white-space:nowrap;
+}
+.nav-wallet:hover{background:rgba(64,192,224,.08)}
+.nav-return{
+  font-size:.45rem;letter-spacing:.3em;
+  color:var(--muted);cursor:pointer;
+  transition:color .3s;text-decoration:none;
+}
+.nav-return:hover{color:var(--text)}
+
+/* SECTIONS */
+.section{display:none}.section.active{display:block}
+
+/* ── DROP SECTION ── */
+#sec-drop{padding:7rem 3rem 5rem}
+
+.drop-hero{text-align:center;margin-bottom:4rem}
+.drop-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:.5rem;letter-spacing:.3em;
+  color:var(--cyan);margin-bottom:1rem;
+}
+.drop-title{
+  font-family:'Cinzel',serif;font-weight:400;
+  font-size:clamp(2rem,5vw,4rem);
+  letter-spacing:.2em;color:var(--cold-cream);
+  margin-bottom:.5rem;
+}
+.drop-subtitle{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-style:italic;
+  color:var(--text);margin-bottom:2rem;letter-spacing:.05em;
+}
+.drop-rule{
+  width:1px;height:50px;
+  background:linear-gradient(to bottom,var(--violet2),transparent);
+  margin:0 auto 2rem;
+}
+.drop-desc{
+  font-size:.75rem;line-height:2.3;
+  color:var(--muted);max-width:480px;margin:0 auto;
+}
+
+/* COUNTDOWN */
+.countdown-wrap{
+  display:flex;gap:2rem;justify-content:center;
+  margin:3rem 0;
+}
+.countdown-unit{text-align:center}
+.countdown-num{
+  font-family:'Space Mono',monospace;
+  font-size:2.5rem;color:var(--cold-cream);
+  display:block;line-height:1;
+}
+.countdown-label{
+  font-size:.38rem;letter-spacing:.4em;
+  text-transform:uppercase;color:var(--muted);
+  margin-top:.3rem;display:block;
+}
+.countdown-sep{
+  font-family:'Space Mono',monospace;
+  font-size:2rem;color:var(--violet);
+  line-height:2.2;
+}
+
+/* WORKS GRID */
+.works-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:2px;margin-top:4rem;
+}
+
+/* NFT CARD */
+.nft-card{
+  position:relative;
+  background:var(--surface);
+  overflow:hidden;cursor:pointer;
+  transition:transform .5s ease;
+  border:1px solid rgba(96,64,208,.1);
+}
+.nft-card:hover{transform:translateY(-4px)}
+.nft-card:hover .nft-glow{opacity:1}
+.nft-card:hover canvas{filter:brightness(1) saturate(1.1)}
+
+.nft-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(96,64,208,.12),transparent 70%);
+  opacity:0;transition:opacity .5s;pointer-events:none;z-index:1;
+}
+
+.nft-card canvas{
+  width:100%;display:block;
+  filter:brightness(.82) saturate(.8);
+  transition:filter .5s;
+  aspect-ratio:1;
+}
+
+.nft-card-body{
+  padding:1.5rem;
+  border-top:1px solid rgba(96,64,208,.15);
+  position:relative;z-index:2;
+}
+.nft-card-tag{
+  font-family:'Space Mono',monospace;
+  font-size:.4rem;letter-spacing:.25em;
+  color:var(--violet2);margin-bottom:.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.nft-card-tag-status{color:var(--cyan)}
+.nft-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-style:italic;
+  color:var(--cold-cream);margin-bottom:.25rem;
+}
+.nft-artist{
+  font-size:.45rem;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--muted);
+  margin-bottom:1rem;
+}
+.nft-meta{
+  display:flex;justify-content:space-between;
+  align-items:flex-end;
+}
+.nft-edition{
+  font-family:'Space Mono',monospace;
+  font-size:.5rem;color:var(--text);letter-spacing:.1em;
+}
+.nft-edition span{color:var(--violet2)}
+.nft-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;color:var(--cold-cream);
+}
+.nft-price small{
+  font-family:'Space Mono',monospace;
+  font-size:.45rem;color:var(--muted);
+  display:block;letter-spacing:.1em;
+}
+
+/* SOLD OUT card */
+.nft-card.closed{opacity:.55;cursor:default}
+.nft-card.closed:hover{transform:none}
+.closed-badge{
+  position:absolute;top:1rem;right:1rem;
+  background:rgba(6,10,18,.9);
+  border:1px solid rgba(96,64,208,.3);
+  font-family:'Space Mono',monospace;
+  font-size:.38rem;letter-spacing:.25em;
+  color:var(--violet2);padding:.3rem .6rem;z-index:5;
+}
+
+/* ── MODAL ── */
+#modal{
+  position:fixed;inset:0;
+  background:rgba(2,4,8,.97);
+  z-index:1000;display:flex;
+  align-items:center;justify-content:center;
+  padding:2rem;opacity:0;visibility:hidden;
+  transition:all .5s;
+}
+#modal.open{opacity:1;visibility:visible}
+
+.modal-inner{
+  display:grid;grid-template-columns:1fr 1fr;
+  max-width:1080px;width:100%;
+  max-height:92vh;overflow:hidden;
+  border:1px solid rgba(96,64,208,.2);
+}
+.modal-left{
+  background:var(--deep);
+  display:flex;align-items:center;justify-content:center;
+  padding:3rem;position:relative;
+}
+.modal-left::before{
+  content:'';position:absolute;inset:1rem;
+  border:1px solid rgba(96,64,208,.08);pointer-events:none;
+}
+.modal-left canvas{
+  max-width:100%;max-height:74vh;
+  object-fit:contain;
+  box-shadow:0 0 60px rgba(96,64,208,.2),0 28px 80px rgba(0,0,0,.8);
+}
+.modal-right{
+  background:var(--surface);
+  padding:3rem;overflow-y:auto;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  border-left:1px solid rgba(96,64,208,.15);
+}
+
+.m-blockchain{
+  font-family:'Space Mono',monospace;
+  font-size:.42rem;letter-spacing:.2em;
+  color:var(--cyan);margin-bottom:1rem;
+  display:flex;gap:1rem;
+}
+.m-blockchain span{
+  background:rgba(64,192,224,.08);
+  border:1px solid rgba(64,192,224,.2);
+  padding:.2rem .5rem;
+}
+.m-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.9rem;font-weight:300;font-style:italic;
+  color:var(--cold-cream);line-height:1.2;margin-bottom:.35rem;
+}
+.m-artist{
+  font-size:.5rem;letter-spacing:.32em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:1.5rem;
+}
+.m-rule{
+  width:30px;height:1px;
+  background:var(--violet2);opacity:.4;margin-bottom:1.5rem;
+}
+.m-story{
+  font-size:.72rem;line-height:2.15;
+  color:var(--text);opacity:.82;margin-bottom:1.8rem;
+}
+.m-specs{
+  border-top:1px solid rgba(96,64,208,.15);
+  padding-top:1.2rem;margin-bottom:1.5rem;
+}
+.m-spec{
+  display:flex;justify-content:space-between;
+  align-items:baseline;margin-bottom:.6rem;
+}
+.m-spec-k{
+  font-family:'Space Mono',monospace;
+  font-size:.38rem;letter-spacing:.2em;color:var(--muted);
+}
+.m-spec-v{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.9rem;color:var(--cold-cream);
+}
+.m-spec-v.hi{color:var(--violet2)}
+.m-spec-v.cy{color:var(--cyan)}
+
+.m-edition-bar{
+  margin-bottom:1.5rem;
+  background:rgba(96,64,208,.1);
+  border:1px solid rgba(96,64,208,.2);
+  padding:1rem;
+}
+.m-edition-label{
+  font-family:'Space Mono',monospace;
+  font-size:.4rem;letter-spacing:.2em;
+  color:var(--muted);margin-bottom:.5rem;
+}
+.m-edition-track{
+  height:2px;background:rgba(96,64,208,.2);
+  margin-bottom:.4rem;position:relative;
+}
+.m-edition-fill{
+  position:absolute;top:0;left:0;height:100%;
+  background:linear-gradient(to right,var(--violet),var(--violet2));
+  transition:width .6s ease;
+}
+.m-edition-nums{
+  display:flex;justify-content:space-between;
+  font-family:'Space Mono',monospace;
+  font-size:.4rem;color:var(--muted);
+}
+.m-edition-nums span:first-child{color:var(--violet2)}
+
+.m-collect{
+  background:none;
+  border:1px solid var(--border);
+  color:var(--violet2);
+  font-family:'Raleway',sans-serif;font-weight:200;
+  font-size:.55rem;letter-spacing:.5em;
+  text-transform:uppercase;
+  padding:1rem;cursor:pointer;
+  transition:all .4s;width:100%;
+  position:relative;overflow:hidden;
+  margin-bottom:.8rem;
+}
+.m-collect::before{
+  content:'';position:absolute;inset:0;
+  background:var(--violet3);
+  transform:translateX(-100%);transition:transform .4s;
+}
+.m-collect:hover::before{transform:translateX(0)}
+.m-collect:hover{border-color:var(--violet2);letter-spacing:.65em}
+.m-collect span{position:relative;z-index:1}
+
+.m-wallet-note{
+  font-family:'Space Mono',monospace;
+  font-size:.38rem;letter-spacing:.1em;
+  color:var(--muted);text-align:center;line-height:1.8;
+}
+
+.m-close{
+  position:fixed;top:1.5rem;right:2rem;
+  background:none;border:none;
+  color:var(--muted);font-size:.45rem;
+  letter-spacing:.28em;text-transform:uppercase;
+  cursor:pointer;transition:color .3s;z-index:10;
+  font-family:'Raleway',sans-serif;
+}
+.m-close:hover{color:var(--cold-cream)}
+
+/* ── ABOUT SECTION ── */
+#sec-about{padding:7rem 3rem 5rem;max-width:800px;margin:0 auto}
+.about-v-title{
+  font-family:'Cinzel',serif;font-size:2.5rem;
+  letter-spacing:.25em;color:var(--cold-cream);
+  text-align:center;margin-bottom:.5rem;
+}
+.about-v-sub{
+  font-family:'Space Mono',monospace;font-style:italic;
+  font-size:.55rem;letter-spacing:.2em;
+  color:var(--violet2);text-align:center;margin-bottom:3rem;
+}
+.about-v-rule{
+  width:1px;height:50px;
+  background:linear-gradient(to bottom,var(--violet2),transparent);
+  margin:0 auto 3rem;
+}
+.about-cols{display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-bottom:3rem}
+.about-col h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-style:italic;
+  color:var(--cold-cream);margin-bottom:.8rem;
+}
+.about-col p{font-size:.7rem;line-height:2.3;color:var(--muted);margin-bottom:.8rem}
+
+.manifesto{
+  border:1px solid rgba(96,64,208,.2);
+  padding:3rem;text-align:center;
+  margin-bottom:3rem;
+}
+.manifesto-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-style:italic;
+  color:var(--cold-cream);line-height:1.8;margin-bottom:1rem;
+}
+.manifesto-sub{
+  font-family:'Space Mono',monospace;
+  font-size:.45rem;letter-spacing:.2em;color:var(--violet2);
+}
+
+/* ── WALLET MODAL ── */
+#wallet-modal{
+  position:fixed;inset:0;
+  background:rgba(2,4,8,.98);
+  z-index:1100;display:flex;
+  align-items:center;justify-content:center;
+  padding:2rem;opacity:0;visibility:hidden;transition:all .4s;
+}
+#wallet-modal.open{opacity:1;visibility:visible}
+.wallet-box{
+  background:var(--surface);
+  border:1px solid rgba(96,64,208,.25);
+  padding:3rem;max-width:420px;width:100%;
+  position:relative;text-align:center;
+}
+.wallet-title{
+  font-family:'Cinzel',serif;font-size:1.5rem;
+  letter-spacing:.2em;color:var(--cold-cream);
+  margin-bottom:.5rem;
+}
+.wallet-sub{
+  font-family:'Space Mono',monospace;font-style:italic;
+  font-size:.45rem;letter-spacing:.15em;
+  color:var(--violet2);margin-bottom:2rem;
+}
+.wallet-options{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.5rem}
+.wallet-btn{
+  background:var(--surface2);
+  border:1px solid rgba(96,64,208,.2);
+  color:var(--cold-cream);
+  font-family:'Raleway',sans-serif;font-weight:300;
+  font-size:.6rem;letter-spacing:.25em;
+  padding:1rem;cursor:pointer;
+  transition:all .3s;display:flex;
+  align-items:center;justify-content:center;gap:1rem;
+}
+.wallet-btn:hover{border-color:var(--violet2);background:var(--violet4)}
+.wallet-btn-icon{font-size:1.2rem}
+.wallet-note{
+  font-family:'Space Mono',monospace;
+  font-size:.38rem;letter-spacing:.1em;
+  color:var(--muted);line-height:1.8;
+}
+.wallet-close{
+  position:absolute;top:1rem;right:1.2rem;
+  background:none;border:none;
+  color:var(--muted);font-size:.4rem;
+  letter-spacing:.25em;cursor:pointer;
+  font-family:'Raleway',sans-serif;transition:color .3s;
+}
+.wallet-close:hover{color:var(--cold-cream)}
+
+/* ── COLLECT FLOW ── */
+#collect-modal{
+  position:fixed;inset:0;
+  background:rgba(2,4,8,.98);
+  z-index:1200;display:flex;
+  align-items:center;justify-content:center;
+  padding:2rem;opacity:0;visibility:hidden;transition:all .4s;
+}
+#collect-modal.open{opacity:1;visibility:visible}
+.collect-box{
+  background:var(--surface);
+  border:1px solid rgba(96,64,208,.25);
+  padding:3rem;max-width:520px;width:100%;
+  position:relative;
+}
+.collect-step{display:none}
+.collect-step.active{display:block}
+.collect-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:.4rem;letter-spacing:.25em;
+  color:var(--violet2);margin-bottom:1rem;
+}
+.collect-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem;font-style:italic;
+  color:var(--cold-cream);margin-bottom:.3rem;
+}
+.collect-sub{font-size:.55rem;color:var(--muted);line-height:1.9;margin-bottom:2rem}
+.collect-field{margin-bottom:1.3rem}
+.collect-label{
+  display:block;font-family:'Space Mono',monospace;
+  font-size:.38rem;letter-spacing:.25em;
+  color:var(--muted);margin-bottom:.4rem;
+}
+.collect-input{
+  width:100%;background:rgba(255,255,255,.03);
+  border:1px solid rgba(96,64,208,.15);
+  color:var(--cold-cream);
+  font-family:'Raleway',sans-serif;font-weight:300;
+  font-size:.72rem;padding:.72rem 1rem;
+  outline:none;transition:border-color .3s;border-radius:0;
+}
+.collect-input:focus{border-color:var(--border)}
+.collect-input::placeholder{color:var(--muted);font-size:.65rem}
+
+.collect-payment{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;
+  margin-bottom:1.5rem;
+}
+.pay-option{
+  background:var(--surface2);
+  border:1px solid rgba(96,64,208,.15);
+  padding:.8rem;text-align:center;cursor:pointer;
+  transition:all .3s;
+}
+.pay-option:hover,.pay-option.on{
+  border-color:var(--violet2);background:var(--violet4);
+}
+.pay-option-icon{font-size:1.2rem;margin-bottom:.3rem}
+.pay-option-label{
+  font-family:'Space Mono',monospace;
+  font-size:.38rem;letter-spacing:.15em;color:var(--text);
+}
+
+.collect-summary{
+  background:var(--surface2);
+  border:1px solid rgba(96,64,208,.15);
+  padding:1.2rem;margin-bottom:1.5rem;
+}
+.collect-sum-row{
+  display:flex;justify-content:space-between;
+  margin-bottom:.5rem;
+}
+.collect-sum-k{
+  font-family:'Space Mono',monospace;
+  font-size:.4rem;letter-spacing:.15em;color:var(--muted);
+}
+.collect-sum-v{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.9rem;color:var(--cold-cream);
+}
+.collect-sum-v.hi{color:var(--violet2)}
+
+.collect-btn{
+  width:100%;background:none;
+  border:1px solid var(--border);
+  color:var(--violet2);
+  font-family:'Raleway',sans-serif;font-weight:200;
+  font-size:.52rem;letter-spacing:.5em;
+  text-transform:uppercase;padding:1rem;
+  cursor:pointer;transition:all .4s;
+  position:relative;overflow:hidden;
+}
+.collect-btn::before{
+  content:'';position:absolute;inset:0;
+  background:var(--violet3);
+  transform:translateX(-100%);transition:transform .4s;
+}
+.collect-btn:hover::before{transform:translateX(0)}
+.collect-btn:hover{border-color:var(--violet2);letter-spacing:.65em}
+.collect-btn span{position:relative;z-index:1}
+
+.collect-success{text-align:center;padding:2rem 0}
+.collect-success-icon{font-size:3rem;margin-bottom:1rem}
+.collect-success-title{
+  font-family:'Cinzel',serif;font-size:1.4rem;
+  letter-spacing:.15em;color:var(--cold-cream);margin-bottom:.8rem;
+}
+.collect-success-text{
+  font-size:.62rem;color:var(--muted);
+  line-height:2;letter-spacing:.05em;margin-bottom:1.5rem;
+}
+.collect-success-hash{
+  font-family:'Space Mono',monospace;
+  font-size:.4rem;color:var(--violet2);
+  letter-spacing:.1em;word-break:break-all;
+  background:var(--surface2);padding:.8rem;
+  border:1px solid rgba(96,64,208,.15);
+}
+
+.collect-close{
+  position:absolute;top:1.2rem;right:1.4rem;
+  background:none;border:none;
+  color:var(--muted);font-size:.4rem;
+  letter-spacing:.25em;cursor:pointer;
+  font-family:'Raleway',sans-serif;transition:color .3s;
+}
+.collect-close:hover{color:var(--cold-cream)}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:4rem 2rem;
+  border-top:1px solid rgba(96,64,208,.1);
+  margin-top:3rem;position:relative;z-index:1;
+}
+.footer-logo{
+  font-family:'Cinzel',serif;font-size:1.1rem;
+  letter-spacing:.25em;color:rgba(216,232,244,.2);
+  display:block;margin-bottom:.3rem;
+}
+.footer-sub{
+  font-family:'Space Mono',monospace;
+  font-size:.4rem;letter-spacing:.25em;
+  color:rgba(96,64,208,.4);display:block;margin-bottom:.5rem;
+}
+.footer-return{
+  font-size:.45rem;letter-spacing:.3em;
+  color:var(--muted);cursor:pointer;
+  transition:color .3s;text-decoration:none;
+}
+.footer-return:hover{color:var(--text)}
+
+/* ANIMATIONS */
+@keyframes riseIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes rotateSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes scanline{
+  0%{transform:translateY(-100%)}
+  100%{transform:translateY(100vh)}
+}
+
+/* SCANLINE */
+body::after{
+  content:'';position:fixed;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(to right,transparent,rgba(96,64,208,.15),transparent);
+  animation:scanline 8s linear infinite;
+  z-index:0;pointer-events:none;
+}
+
+@media(max-width:900px){
+  .modal-inner{grid-template-columns:1fr}
+  .about-cols{grid-template-columns:1fr}
+  .works-grid{grid-template-columns:1fr 1fr}
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  #sec-drop,#sec-about{padding:5rem 1.5rem 3rem}
+  .collect-payment{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .works-grid{grid-template-columns:1fr}
+  .countdown-wrap{gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- PORTAL ENTRANCE -->
+<div id="portal">
+  <div class="portal-ring">
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="90" stroke="rgba(96,64,208,0.3)" stroke-width="1" stroke-dasharray="4 8"/>
+      <circle cx="100" cy="100" r="75" stroke="rgba(96,64,208,0.15)" stroke-width="0.5"/>
+      <circle cx="100" cy="100" r="60" stroke="rgba(64,192,224,0.2)" stroke-width="0.5" stroke-dasharray="2 6"/>
+    </svg>
+    <div class="portal-center">
+      <div class="portal-logo-wrap">
+        <span class="portal-logo-main">THE GALLERY</span>
+        <span class="portal-logo-divider">✦</span>
+        <span class="portal-logo-sub">VIRTUEL</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="portal-title">VIRTUEL</div>
+  <div class="portal-tagline">// digital editions · blockchain verified · limited to 10</div>
+
+  <div class="portal-drop">
+    <div class="portal-drop-label">Current Drop</div>
+    <div class="portal-drop-name">Summer 2026 Digital Collection</div>
+    <div class="portal-drop-status">◉ OPENING SOON</div>
+  </div>
+
+  <button class="portal-btn" onclick="enterVirtuel()"><span>Enter the Digital Collection</span></button>
+  <a class="portal-return" href="the-gallery-v3.html">← Return to the Physical Collection</a>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<nav>
+  <div class="nav-logo" onclick="showSection('drop')">
+    <span class="nav-logo-main">THE GALLERY</span>
+    <span class="nav-logo-sub">VIRTUEL · Digital Editions</span>
+  </div>
+  <ul class="nav-links">
+    <li><a id="nav-drop" onclick="showSection('drop')">Drop</a></li>
+    <li><a id="nav-about" onclick="showSection('about')">About</a></li>
+  </ul>
+  <div style="display:flex;gap:1rem;align-items:center">
+    <a class="nav-return" href="the-gallery-v3.html">← Physical Collection</a>
+    <div class="nav-wallet" onclick="openWallet()">Connect Wallet</div>
+  </div>
+</nav>
+
+<!-- DROP SECTION -->
+<div id="sec-drop" class="section active">
+  <div class="drop-hero">
+    <div class="drop-eyebrow">// Summer 2026 Digital Collection · Now Open</div>
+    <h1 class="drop-title">VIRTUEL</h1>
+    <div class="drop-subtitle">Digital editions of fine art photography.</div>
+    <div class="drop-rule"></div>
+    <p class="drop-desc">Each work exists as 10 digital editions — and nothing more. Minted on Tezos. Delivered to your wallet. Verified on the blockchain. When edition 10 is claimed, this work enters the permanent archive.</p>
+  </div>
+
+  <div class="countdown-wrap" id="countdown">
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-days">47</span>
+      <span class="countdown-label">Days</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-hours">12</span>
+      <span class="countdown-label">Hours</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-mins">33</span>
+      <span class="countdown-label">Minutes</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-secs">08</span>
+      <span class="countdown-label">Seconds</span>
+    </div>
+  </div>
+
+  <div class="works-grid" id="works-grid"></div>
+</div>
+
+<!-- ABOUT SECTION -->
+<div id="sec-about" class="section">
+  <div class="about-v-title">VIRTUEL</div>
+  <div class="about-v-sub">// by The Gallery Austin · Digital Collection</div>
+  <div class="about-v-rule"></div>
+
+  <div class="manifesto">
+    <div class="manifesto-text">"Photography that exists beyond the physical world.<br>Owned forever. Verifiable by anyone.<br>Transferable to anyone."</div>
+    <div class="manifesto-sub">// THE GALLERY AUSTIN · VIRTUEL · EST. 2026</div>
+  </div>
+
+  <div class="about-cols">
+    <div class="about-col">
+      <h3>What is a Digital Edition?</h3>
+      <p>A digital edition from The Gallery Austin is a unique NFT — a non-fungible token — minted on the Tezos blockchain. It is a cryptographically verified certificate of ownership for a specific digital artwork.</p>
+      <p>Each edition is numbered. Each is limited to 10. When edition 10 is claimed, no further digital editions of that work will ever be produced.</p>
+    </div>
+    <div class="about-col">
+      <h3>How it works</h3>
+      <p>Connect your Tezos wallet. Select a work. Choose your edition. Complete your collection. The NFT is minted and delivered to your wallet immediately upon payment.</p>
+      <p>You receive a digital certificate of authenticity — on-chain, permanent, and verifiable by anyone, anywhere, forever. No intermediaries. No waiting.</p>
+    </div>
+  </div>
+
+  <div class="about-cols">
+    <div class="about-col">
+      <h3>The blockchain</h3>
+      <p>Virtuel editions are minted on Tezos — an energy-efficient, proof-of-stake blockchain favored by the fine art community. Transaction fees are negligible. The environmental footprint is minimal.</p>
+    </div>
+    <div class="about-col">
+      <h3>Physical + Digital</h3>
+      <p>Virtuel editions are separate products from The Gallery Austin's physical fine art prints. They are different worlds — different collectors, different experiences, different ownership. Both are limited to 10. Both are permanent.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">THE GALLERY AUSTIN</span>
+  <span class="footer-sub">VIRTUEL · thegalleryaustin.net · @thegalleryaustin</span>
+  <a class="footer-return" href="the-gallery-v3.html">← Return to the Physical Collection</a>
+</footer>
+
+</div><!-- /main -->
+
+<!-- MODAL -->
+<div id="modal">
+  <button class="m-close" onclick="closeModal()">✕ &nbsp;Close</button>
+  <div class="modal-inner">
+    <div class="modal-left"><canvas id="modal-canvas"></canvas></div>
+    <div class="modal-right">
+      <div>
+        <div class="m-blockchain">
+          <span>Tezos</span>
+          <span id="m-chain-ed"></span>
+          <span style="color:var(--cyan)" id="m-chain-status"></span>
+        </div>
+        <div class="m-title" id="m-title"></div>
+        <div class="m-artist" id="m-artist"></div>
+        <div class="m-rule"></div>
+        <div class="m-story" id="m-story"></div>
+      </div>
+      <div>
+        <div class="m-edition-bar">
+          <div class="m-edition-label">// EDITION AVAILABILITY</div>
+          <div class="m-edition-track">
+            <div class="m-edition-fill" id="m-fill"></div>
+          </div>
+          <div class="m-edition-nums">
+            <span id="m-remaining"></span>
+            <span>10 total</span>
+          </div>
+        </div>
+        <div class="m-specs">
+          <div class="m-spec"><span class="m-spec-k">FORMAT</span><span class="m-spec-v">Digital Edition · NFT</span></div>
+          <div class="m-spec"><span class="m-spec-k">BLOCKCHAIN</span><span class="m-spec-v cy">Tezos</span></div>
+          <div class="m-spec"><span class="m-spec-k">HALL</span><span class="m-spec-v" id="m-hall"></span></div>
+          <div class="m-spec"><span class="m-spec-k">COLLECTION</span><span class="m-spec-v">Summer 2026</span></div>
+          <div class="m-spec"><span class="m-spec-k">PRICE</span><span class="m-spec-v hi" id="m-price"></span></div>
+        </div>
+        <button class="m-collect" onclick="openCollect(currentWork)"><span>Collect This Edition</span></button>
+        <div class="m-wallet-note">Requires a Tezos wallet · Temple · Kukai · Beacon<br>Payment accepted in XTZ or USDC</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET MODAL -->
+<div id="wallet-modal">
+  <div class="wallet-box">
+    <button class="wallet-close" onclick="closeWallet()">✕ Close</button>
+    <div class="wallet-title">Connect</div>
+    <div class="wallet-sub">// Select your Tezos wallet</div>
+    <div class="wallet-options">
+      <button class="wallet-btn" onclick="connectWallet('Temple')">
+        <span class="wallet-btn-icon">🏛</span>Temple Wallet
+      </button>
+      <button class="wallet-btn" onclick="connectWallet('Kukai')">
+        <span class="wallet-btn-icon">🌊</span>Kukai Wallet
+      </button>
+      <button class="wallet-btn" onclick="connectWallet('Beacon')">
+        <span class="wallet-btn-icon">📡</span>Beacon Protocol
+      </button>
+    </div>
+    <div class="wallet-note">Your wallet is never stored.<br>Connection is read-only until you confirm a transaction.</div>
+  </div>
+</div>
+
+<!-- COLLECT MODAL -->
+<div id="collect-modal">
+  <div class="collect-box">
+    <button class="collect-close" onclick="closeCollect()">✕ Close</button>
+
+    <!-- Step 1: Payment -->
+    <div class="collect-step active" id="step-1">
+      <div class="collect-eyebrow">// Reserve Your Edition</div>
+      <div class="collect-title" id="c-title"></div>
+      <div class="collect-sub" id="c-sub"></div>
+
+      <div class="collect-field">
+        <label class="collect-label">Your Name</label>
+        <input class="collect-input" type="text" placeholder="Full name">
+      </div>
+      <div class="collect-field">
+        <label class="collect-label">Email</label>
+        <input class="collect-input" type="email" placeholder="your@email.com">
+      </div>
+      <div class="collect-field">
+        <label class="collect-label">Tezos Wallet Address</label>
+        <input class="collect-input" type="text" placeholder="tz1...">
+      </div>
+
+      <div class="collect-label" style="margin-bottom:.6rem">Payment Method</div>
+      <div class="collect-payment">
+        <div class="collect-payment">
+          <div class="pay-option on" onclick="selectPay(this)">
+            <div class="pay-option-icon">Ξ</div>
+            <div class="pay-option-label">XTZ</div>
+          </div>
+          <div class="pay-option" onclick="selectPay(this)">
+            <div class="pay-option-icon">$</div>
+            <div class="pay-option-label">USDC</div>
+          </div>
+          <div class="pay-option" onclick="selectPay(this)">
+            <div class="pay-option-icon">💳</div>
+            <div class="pay-option-label">Card</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="collect-summary">
+        <div class="collect-sum-row">
+          <span class="collect-sum-k">WORK</span>
+          <span class="collect-sum-v" id="c-sum-title"></span>
+        </div>
+        <div class="collect-sum-row">
+          <span class="collect-sum-k">EDITION</span>
+          <span class="collect-sum-v hi" id="c-sum-ed"></span>
+        </div>
+        <div class="collect-sum-row">
+          <span class="collect-sum-k">TOTAL</span>
+          <span class="collect-sum-v hi" id="c-sum-price"></span>
+        </div>
+      </div>
+
+      <button class="collect-btn" onclick="submitCollect()"><span>Complete Your Collection</span></button>
+    </div>
+
+    <!-- Step 2: Success -->
+    <div class="collect-step" id="step-2">
+      <div class="collect-success">
+        <div class="collect-success-icon">✦</div>
+        <div class="collect-success-title">Edition Secured.</div>
+        <div class="collect-success-text">
+          Your digital edition is being minted on the Tezos blockchain.<br>
+          It will arrive in your wallet within minutes.<br>
+          A confirmation has been sent to your email.
+        </div>
+        <div class="collect-success-hash" id="c-hash">
+          TX: 0x7f3a9b2c1d4e5f6a8b9c0d1e2f3a4b5c6d7e8f9...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// NFT WORKS DATA
+// ══════════════════════════════════
+const WORKS = [
+  {
+    title:"Luz de Tarde",artist:"Arlen Nydam",hall:"Portraits",
+    story:"The afternoon light fell across her face like a slow revelation. This portrait was made in a garden in East Austin on a September afternoon that refused to surrender its gold. As a digital edition, this work exists only on the blockchain — permanent, verifiable, yours.",
+    sold:3,total:10,price:"0.8 XTZ / $150 USDC",
+    pal:["#c9956a","#8a6045","#e8c49a","#5a3e2b","#f0d4b0","#a07050"]
+  },
+  {
+    title:"Third Street, 2am",artist:"Arlen Nydam",hall:"Urban",
+    story:"The city at 2am belongs to a different city entirely. All the pressure removed — no one performing for anyone else. As a digital edition, this image pulses with a light that screens render unlike any paper ever could.",
+    sold:7,total:10,price:"0.6 XTZ / $120 USDC",
+    pal:["#1a2535","#3a4a65","#c8a050","#0a1020","#e0c880","#2a3545"]
+  },
+  {
+    title:"San José, Noon Light",artist:"Arlen Nydam",hall:"Sacred",
+    story:"Mission San José on a cloudless noon — the light enters through a window placed to receive it for three hundred years. On a screen, this light behaves differently than on paper. It glows rather than reflects.",
+    sold:1,total:10,price:"1.2 XTZ / $200 USDC",
+    pal:["#c8b890","#e8d8b0","#f8f0d8","#786848","#fff8e8","#a89870"]
+  },
+  {
+    title:"Wyoming, Open Road",artist:"Arlen Nydam",hall:"Discovery",
+    story:"The road stretched ahead for forty miles without a turn. The digital edition renders the sky at a fidelity that archival paper cannot approach. This is not a compromise — it is a different truth.",
+    sold:4,total:10,price:"0.7 XTZ / $130 USDC",
+    pal:["#6888a0","#90a8b8","#d0e0e8","#283848","#e8f0f4","#788898"]
+  },
+  {
+    title:"Incident Light No. 7",artist:"Arlen Nydam",hall:"Abstract",
+    story:"Pure light, pure geometry. A long exposure through textured glass. Abstract photography as digital edition finds its most natural home — light rendered in light.",
+    sold:0,total:10,price:"0.9 XTZ / $160 USDC",
+    pal:["#2a3050","#8090d0","#e0e8f8","#101828","#a0b0e0","#c0cce8"]
+  },
+  {
+    title:"La Mirada",artist:"Sofia Reyes",hall:"La Femme",
+    story:"A glance over the shoulder that holds everything. This frame lasted less than a second. As a digital edition, it is immutable — this moment is preserved on the blockchain for as long as the chain exists.",
+    sold:10,total:10,price:"0.8 XTZ / $150 USDC",
+    pal:["#3a2830","#8a5060","#d09090","#180810","#e8b8b8","#6a3848"],
+    closed:true
+  },
+];
+
+let currentWork = null;
+
+// ══════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for(let i = 0; i < 80; i++){
+    particles.push({
+      x: Math.random()*window.innerWidth,
+      y: Math.random()*window.innerHeight,
+      r: Math.random()*.8+.2,
+      vx: (Math.random()-.5)*.15,
+      vy: (Math.random()-.5)*.15,
+      a: Math.random()*.5+.1,
+      col: Math.random() > .7 ? '#40c0e0' : '#6040d0'
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.col;
+      ctx.globalAlpha=p.a;
+      ctx.fill();
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════
+// COUNTDOWN
+// ══════════════════════════════════
+function updateCountdown(){
+  const target = new Date('2026-06-21T10:00:00-05:00');
+  const now = new Date();
+  const diff = target - now;
+  if(diff <= 0){
+    document.getElementById('countdown').innerHTML = '<div style="font-family:Space Mono,monospace;font-size:.6rem;color:var(--cyan);letter-spacing:.3em">// DROP IS LIVE</div>';
+    return;
+  }
+  const d = Math.floor(diff/864e5);
+  const h = Math.floor((diff%864e5)/36e5);
+  const m = Math.floor((diff%36e5)/6e4);
+  const s = Math.floor((diff%6e4)/1e3);
+  document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+  document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown,1000);
+
+// ══════════════════════════════════
+// ENTER
+// ══════════════════════════════════
+function enterVirtuel(){
+  document.getElementById('portal').classList.add('out');
+  const m = document.getElementById('main');
+  m.style.display = 'block';
+  setTimeout(()=>m.classList.add('in'), 50);
+  buildGrid();
+}
+
+// ══════════════════════════════════
+// SECTIONS
+// ══════════════════════════════════
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('on'));
+  const n = document.getElementById('nav-'+id);
+  if(n) n.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════
+// BUILD GRID
+// ══════════════════════════════════
+function buildGrid(){
+  const grid = document.getElementById('works-grid');
+  WORKS.forEach(w=>{
+    const card = document.createElement('div');
+    card.className = 'nft-card' + (w.closed ? ' closed' : '');
+
+    const glow = document.createElement('div'); glow.className='nft-glow';
+    const canvas = document.createElement('canvas');
+    drawNFT(canvas, w, 400, 400);
+
+    if(w.closed){
+      const badge = document.createElement('div');
+      badge.className='closed-badge'; badge.textContent='EDITION COMPLETE';
+      card.appendChild(badge);
+    }
+
+    const body = document.createElement('div'); body.className='nft-card-body';
+    const remaining = w.total - w.sold;
+    body.innerHTML=`
+      <div class="nft-card-tag">
+        <span>${w.hall} Hall · Tezos</span>
+        <span class="nft-card-tag-status">${w.closed?'// CLOSED':'// '+remaining+' remaining'}</span>
+      </div>
+      <div class="nft-title">${w.title}</div>
+      <div class="nft-artist">${w.artist}</div>
+      <div class="nft-meta">
+        <div class="nft-edition">Edition <span>${w.sold}/${w.total}</span></div>
+        <div class="nft-price">
+          <small>FROM</small>${w.price.split('/')[0].trim()}
+        </div>
+      </div>
+    `;
+    card.appendChild(glow); card.appendChild(canvas); card.appendChild(body);
+    if(!w.closed) card.addEventListener('click',()=>openWork(w));
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════
+// OPEN WORK
+// ══════════════════════════════════
+function openWork(w){
+  currentWork = w;
+  const remaining = w.total - w.sold;
+  const pct = (w.sold/w.total)*100;
+
+  document.getElementById('m-chain-ed').textContent = 'Edition '+w.sold+'/'+w.total;
+  document.getElementById('m-chain-status').textContent = remaining+' remaining';
+  document.getElementById('m-title').textContent = w.title;
+  document.getElementById('m-artist').textContent = 'By '+w.artist;
+  document.getElementById('m-story').textContent = w.story;
+  document.getElementById('m-hall').textContent = w.hall+' Hall';
+  document.getElementById('m-price').textContent = w.price;
+  document.getElementById('m-fill').style.width = pct+'%';
+  document.getElementById('m-remaining').textContent = remaining+' of '+w.total+' available';
+
+  drawNFT(document.getElementById('modal-canvas'), w, 500, 500);
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; }
+
+// ══════════════════════════════════
+// WALLET
+// ══════════════════════════════════
+function openWallet(){ document.getElementById('wallet-modal').classList.add('open'); }
+function closeWallet(){ document.getElementById('wallet-modal').classList.remove('open'); }
+function connectWallet(name){
+  closeWallet();
+  document.querySelector('.nav-wallet').textContent = '✓ '+name+' Connected';
+  document.querySelector('.nav-wallet').style.color = 'var(--cyan)';
+}
+
+// ══════════════════════════════════
+// COLLECT FLOW
+// ══════════════════════════════════
+function openCollect(w){
+  closeModal();
+  const remaining = w.total - w.sold;
+  document.getElementById('c-title').textContent = w.title;
+  document.getElementById('c-sub').textContent = 'By '+w.artist+' · '+w.hall+' Hall · Edition '+(w.sold+1)+' of '+w.total;
+  document.getElementById('c-sum-title').textContent = w.title;
+  document.getElementById('c-sum-ed').textContent = 'Edition '+(w.sold+1)+' of '+w.total;
+  document.getElementById('c-sum-price').textContent = w.price;
+  document.getElementById('step-1').classList.add('active');
+  document.getElementById('step-2').classList.remove('active');
+  document.getElementById('collect-modal').classList.add('open');
+}
+function closeCollect(){ document.getElementById('collect-modal').classList.remove('open'); }
+function selectPay(el){
+  document.querySelectorAll('.pay-option').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+}
+function submitCollect(){
+  document.getElementById('step-1').classList.remove('active');
+  document.getElementById('step-2').classList.add('active');
+  const hash = 'op'+Math.random().toString(36).substr(2,32).toUpperCase();
+  document.getElementById('c-hash').textContent = 'TX: '+hash;
+  setTimeout(closeCollect, 5000);
+}
+
+// ══════════════════════════════════
+// NFT CANVAS RENDERER
+// ══════════════════════════════════
+function drawNFT(canvas, w, W, H){
+  canvas.width=W; canvas.height=H;
+  canvas.style.width='100%'; canvas.style.display='block';
+  const ctx = canvas.getContext('2d');
+
+  // Dark base
+  const bg = ctx.createRadialGradient(W*.4,H*.35,0,W*.5,H*.5,Math.max(W,H)*.9);
+  bg.addColorStop(0, w.pal[2]+'cc');
+  bg.addColorStop(.4, w.pal[0]+'99');
+  bg.addColorStop(.75, w.pal[1]+'66');
+  bg.addColorStop(1, '#040408');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // Painterly layers
+  for(let i=0;i<40;i++){
+    const x=Math.random()*W, y=Math.random()*H;
+    const r=Math.random()*Math.max(W,H)*.2+Math.max(W,H)*.05;
+    const g=ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,(w.pal[Math.floor(Math.random()*w.pal.length)])+'22');
+    g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  }
+
+  // Digital grid overlay
+  ctx.strokeStyle='rgba(96,64,208,0.08)';
+  ctx.lineWidth=.5;
+  const step=W/8;
+  for(let x=0;x<W;x+=step){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+  for(let y=0;y<H;y+=step){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
+
+  // Glitch lines
+  for(let i=0;i<3;i++){
+    const y=Math.random()*H;
+    const g2=ctx.createLinearGradient(0,y,W,y);
+    g2.addColorStop(0,'transparent');
+    g2.addColorStop(.3,'rgba(96,64,208,0.15)');
+    g2.addColorStop(.7,'rgba(64,192,224,0.1)');
+    g2.addColorStop(1,'transparent');
+    ctx.fillStyle=g2;
+    ctx.fillRect(0,y,W,Math.random()*2+.5);
+  }
+
+  // Subject glow
+  const sg=ctx.createRadialGradient(W*.44,H*.38,0,W*.44,H*.5,W*.4);
+  sg.addColorStop(0,(w.pal[4]||w.pal[2])+'aa');
+  sg.addColorStop(.5,(w.pal[0])+'44');
+  sg.addColorStop(1,'transparent');
+  ctx.fillStyle=sg; ctx.fillRect(0,0,W,H);
+
+  // Violet corner glow
+  const vg=ctx.createRadialGradient(W,0,0,W,0,W*.6);
+  vg.addColorStop(0,'rgba(96,64,208,0.15)');
+  vg.addColorStop(1,'transparent');
+  ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+
+  // Vignette
+  const v=ctx.createRadialGradient(W*.5,H*.5,H*.1,W*.5,H*.5,H*.85);
+  v.addColorStop(0,'transparent');
+  v.addColorStop(1,'rgba(2,4,8,0.75)');
+  ctx.fillStyle=v; ctx.fillRect(0,0,W,H);
+
+  // Digital grain
+  for(let i=0;i<Math.min(W*H*.004,2500);i++){
+    const a=Math.random()*.08;
+    const col=Math.random()>.8?'rgba(64,192,224,':'rgba(255,255,255,';
+    ctx.fillStyle=col+a+')';
+    ctx.fillRect(Math.random()*W,Math.random()*H,1,1);
+  }
+
+  // Edition watermark
+  ctx.save();
+  ctx.globalAlpha=.06;
+  ctx.font=`${W*.08}px 'Space Mono',monospace`;
+  ctx.fillStyle='#6040d0';
+  ctx.textAlign='center';
+  ctx.translate(W*.5,H*.5);
+  ctx.rotate(-.3);
+  ctx.fillText('VIRTUEL',0,0);
+  ctx.restore();
+}
+
+// ══════════════════════════════════
+// KEYBOARD
+// ══════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeWallet();closeCollect();}
+});
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('wallet-modal').addEventListener('click',function(e){if(e.target===this)closeWallet();});
+document.getElementById('collect-modal').addEventListener('click',function(e){if(e.target===this)closeCollect();});
+</script>
+</body>
+</html>
